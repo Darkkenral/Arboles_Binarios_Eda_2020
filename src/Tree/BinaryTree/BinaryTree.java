@@ -131,7 +131,7 @@ public interface BinaryTree<E> extends Tree<E>, Iterable<Position<E>> {
      * @param h
      * @param t1 
      */
-    void attachLeft(Position<String> h, BinaryTree<String> t1);
+    void attachLeft(Position<E> h, BinaryTree<E> t1);
     
     /**
      * Attach to the rigth de subtree t1
@@ -139,7 +139,7 @@ public interface BinaryTree<E> extends Tree<E>, Iterable<Position<E>> {
      * @param h
      * @param t1 
      */
-    void attachRight(Position<String> h, BinaryTree<String> t1);
+    void attachRight(Position<E> h, BinaryTree<E> t1);
 
     /**
      * Create un new tree from node v of the same type that invoqued class.
@@ -147,5 +147,5 @@ public interface BinaryTree<E> extends Tree<E>, Iterable<Position<E>> {
      * @param h
      * @return 
      */
-    public BinaryTree<String> subTree(Position<String> h);
+    public BinaryTree<E> subTree(Position<E> h);
 }

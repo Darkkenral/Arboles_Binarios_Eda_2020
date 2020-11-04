@@ -2,7 +2,10 @@ package Tree.BinaryTree;
 
 import com.sun.org.apache.xerces.internal.dom.ParentNode;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
+import javax.xml.xpath.XPathConstants;
 import material.Position;
 
 /**
@@ -10,6 +13,48 @@ import material.Position;
  * @author mayte
  */
 public class LinkedBinaryTree<E> implements BinaryTree<E> {
+
+    private class btNodeIterator<T> implements Iterator<Position<T>> {
+
+        private Queue<Position<T>> it = new LinkedList<>();
+        private LinkedBinaryTree<T> treeaux;
+
+        public btNodeIterator(LinkedBinaryTree<T> originalTree) {
+            if (originalTree.isEmpty()) {
+                throw new RuntimeException("El arbol esta vacio y no puede iterarse");
+            }
+            treeaux = originalTree;
+            if (!treeaux.hasLeft(treeaux.root())) {
+                it.add(treeaux.root());
+            } else {
+                BTNode<T> aux = (BTNode<T>) treeaux.root();
+                it.add(aux.getLeftchildNode());
+            }
+
+        }
+
+        @Override
+        public boolean hasNext() {
+            return !it.isEmpty();
+
+        }
+
+        @Override
+        public Position<T> next() {
+            if (!hasNext()) {
+                throw new RuntimeException("No hay elemento siguiente");
+            }
+            BTNode<T> node = (BTNode<T>) it.poll();
+            if (treeaux.hasLeft(node)) {
+              it.add(node.getLeftchildNode());
+            }
+            it.add(node);
+            
+            
+
+        }
+
+    }
 
     private class BTNode<T> implements Position<T> {
 
@@ -175,10 +220,17 @@ public class LinkedBinaryTree<E> implements BinaryTree<E> {
 
     @Override
     public E remove(Position<E> p) {
-        BTNode<E> node = checkPosition(p);
-        if (!(hasLeft(p) && hasRight(p))) {
-          
+        if (hasLeft(p) && hasRight(p)) {
+            throw new RuntimeException("El nodo tiene mas de un hijo");
         }
+        BTNode<E> node = checkPosition(p);
+        BTNode<E> parent = node.getParentNode();
+        if (node == parent.getLeftchildNode()) {
+            parent.setLeftchildNode(null);
+        } else {
+            parent.setRigthchildNode(null);
+        }
+        return node.getElement();
     }
 
     @Override
@@ -218,21 +270,25 @@ public class LinkedBinaryTree<E> implements BinaryTree<E> {
 
     @Override
     public Iterator<Position<E>> iterator() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return new btNodeIterator(this);
     }
 
     @Override
-    public void attachLeft(Position<String> h, BinaryTree<String> t1) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void attachLeft(Position<E> h, BinaryTree<E> t1) {
+        BTNode<E> node = checkPosition(h);
+        BTNode<E> t1Root = checkPosition(t1.root());
+        node.setLeftchildNode(t1Root);
     }
 
     @Override
-    public void attachRight(Position<String> h, BinaryTree<String> t1) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public void attachRight(Position<E> h, BinaryTree<E> t1) {
+        BTNode<E> node = checkPosition(h);
+        BTNode<E> t1Root = checkPosition(t1.root());
+        node.setRigthchildNode(t1Root);
     }
 
     @Override
-    public LinkedBinaryTree<String> subTree(Position<String> h) {
+    public LinkedBinaryTree<E> subTree(Position<E> h) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
